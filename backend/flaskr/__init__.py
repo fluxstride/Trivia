@@ -32,20 +32,20 @@ def create_app(test_config=None):
     """
     @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
     """
-    CORS(app, resources={"/":{"origins":"*"}})
+    CORS(app, resources={"/": {"origins": "*"}})
 
     """
     @TODO: Use the after_request decorator to set Access-Control-Allow
     """
-    @app.after_request
-    def after_request(request):
-        pass
+    # @app.after_request
+    # def after_request(request):
+    #     pass
 
     @app.route("/")
     def index():
         return jsonify({
             "success": True,
-            "message": "welcome to trivia API"
+            "message": "Welcome to Trivia API"
         })
 
     """
@@ -131,7 +131,6 @@ def create_app(test_config=None):
         category = body.get(
             "category", None)
         difficulty = body.get("difficulty", None)
-        body = request.get_json()
         search = body.get("searchTerm")
 
         """
@@ -191,6 +190,11 @@ def create_app(test_config=None):
     """
     @app.route("/categories/<int:category_id>/questions", methods=["GET"])
     def get_questions_by_category(category_id):
+        categories_count = Category.query.count()
+
+        if category_id > categories_count:
+            abort(404)
+
         current_category = Category.query.filter(
             Category.id == category_id).one_or_none()
         selection = Question.query.filter(
@@ -199,6 +203,7 @@ def create_app(test_config=None):
             request=request, selection=selection)
 
         return jsonify({
+            "success": True,
             "questions": current_questions,
             "total_questions": len(selection),
             "current_category": current_category.type
@@ -226,7 +231,8 @@ def create_app(test_config=None):
             abort(400)
 
         if quiz_category["id"] == 0:
-            questions = [question.format() for question in Question.query.all()]
+            questions = [question.format()
+                         for question in Question.query.all()]
         else:
             questions = [question.format() for question in Question.query.filter(
                 Question.category == quiz_category["id"])]
@@ -235,18 +241,14 @@ def create_app(test_config=None):
 
         while True:
             if question["id"] in previous_questions:
-                    question = random.choice(questions)
+                question = random.choice(questions)
             else:
                 break
 
         return jsonify({
-                    "success": True,
-                    "question": question
-                })
-
-
-
-        
+            "success": True,
+            "question": question
+        })
 
     """
     @TODO:

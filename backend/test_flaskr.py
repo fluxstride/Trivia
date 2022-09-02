@@ -84,7 +84,7 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_create_question(self):
         res = self.client().post('/questions',
-                                 json={"question": "what is your name?", "answer": "My name is ,Samuel", "category": "History", "difficulty": 1})
+                                 json={"question": "what is your name?", "answer": "My name is ,Samuel", "category": 4, "difficulty": 1})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -98,6 +98,33 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
         self.assertTrue(data["questions"])
+
+    def test_questions_in_a_category(self):
+        res = self.client().get("/categories/1/questions")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+        self.assertTrue(data["current_category"])
+
+    def test_question_category_not_found(self):
+        res = self.client().get("/categories/18/questions")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "resource not found")
+
+    def test_quizzes(self):
+        res = self.client().post("/quizzes", json={
+            "previous_questions": [],
+            "quiz_category": {"type": "Science", "id": 1}
+        })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+        self.assertTrue(data["question"])
 
 
 # Make the tests conveniently executable
