@@ -87,6 +87,7 @@ The API will return a **JSON** response with the format below it the request fai
 `GET "/"`
 
 - Index route
+- Request Arguments: None
 - Sample request: `curl -X GET http://localhost:5000`
 
 #### Response:
@@ -103,6 +104,7 @@ The API will return a **JSON** response with the format below it the request fai
 `GET "/categories"`
 
 - Returns a list of all categories of questions
+- Request Arguments: None
 - Sample request: `curl -X GET http://localhost:5000/categories`
 
 #### Response:
@@ -127,6 +129,7 @@ The API will return a **JSON** response with the format below it the request fai
 `POST "/categories"`
 
 - Creates a new category of question
+- Request Arguments: None
 - Sample request: `curl -X POST -H 'Content-Type:application/json' http://localhost:5000/categories -d '{"category":"tester"}'`
 
 #### Request body sample
@@ -151,6 +154,7 @@ The API will return a **JSON** response with the format below it the request fai
 `GET "/questions"`
 
 - Returns a paginated list of questions
+- Request Arguments: None
 - Sample request: `curl -X GET http://localhost:5000/questions`
 
 #### Response:
@@ -200,6 +204,7 @@ The API will return a **JSON** response with the format below it the request fai
 `DELETE "/questions/<int:id>"`
 
 - Deletes the question with given id if it exits in the database.
+- Request Arguments: None
 - Sample request: `curl -X DELETE http://localhost:5000/questions/5`
 
 #### Response:
@@ -249,6 +254,7 @@ The API will return a **JSON** response with the format below it the request fai
 - Used for:
 
   - Searching for a question in the database
+  - Request Arguments: None
   - Sample request: `curl -X POST localhost:5000/questions -H 'Content-Type:application/json' -d '{ "searchTerm": "original" }' `
 
     #### Request body sample:
@@ -280,7 +286,7 @@ The API will return a **JSON** response with the format below it the request fai
     #
 
   - Creating a new question under a specified category
-
+  - Request Arguments: None
   - Sample request: `curl -X POST localhost:5000/questions -H 'Content-Type:application/json' -d '{"question": "What is the name of the highest mountain?","answer":"Mount Everest","category": 3,"difficulty": 1}' `
 
     #### Request body sample:
@@ -385,6 +391,7 @@ The API will return a **JSON** response with the format below it the request fai
     - 4 - History
     - 5 - Entertainment
     - 6 - Sports
+- Request Arguments: None
 - Sample request: `curl -X GET http://localhost:5000/categories/1/questions`
 
 #### Response
@@ -422,6 +429,7 @@ The API will return a **JSON** response with the format below it the request fai
 `POST "/quizzes"`
 
 - Return random questions based on the specified question category
+- Request Arguments: None
 - Sample request: `curl -X POST -H 'Content-Type:application/json' http://localhost:5000/quizzes -d '{ "previous_questions": [], "quiz_category": { "type": "Science", "id": 1 } }'`
 
 #### Request body sample
@@ -447,5 +455,3 @@ The API will return a **JSON** response with the format below it the request fai
   }
 }
 ```
-
-``
