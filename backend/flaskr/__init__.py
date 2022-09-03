@@ -1,12 +1,8 @@
-
-from crypt import methods
-from email import message
-import os
-from unicodedata import category
+import json
 from flask import Flask, request, abort, jsonify
-from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
+from flask_migrate import Migrate
 
 from models import setup_db, Question, Category, db
 
@@ -28,6 +24,7 @@ def create_app(test_config=None):
     app = Flask(__name__)
     app.json.sort_keys = False
     setup_db(app)
+    migrate = Migrate(app, db)
 
     """
     @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
@@ -64,6 +61,24 @@ def create_app(test_config=None):
                       for category in selection}
 
         return jsonify({"success": True, "categories": categories, "total_categories": len(categories)})
+
+    """
+    @TODO
+    Add capability to create new categories.
+    """
+    @app.route('/categories', methods=["POST"])
+    def create_category():
+        categories_count = Category.query.count()
+        body = request.get_json()
+        new_category = body.get("category", None)
+        category = Category(type=new_category)
+        category.id = categories_count + 1
+        category.insert()
+
+        return jsonify({
+            "success": True,
+            "created_category": category.id
+        })
 
     """
     @TODO:
@@ -135,6 +150,7 @@ def create_app(test_config=None):
         category = body.get(
             "category", None)
         difficulty = body.get("difficulty", None)
+        rating = body.get("rating", None)
         search = body.get("searchTerm")
 
         """
@@ -172,7 +188,7 @@ def create_app(test_config=None):
             of the questions list in the "List" tab.
             """
             question = Question(question=question, answer=answer,
-                                category=category, difficulty=difficulty)
+                                category=category, difficulty=difficulty, rating=rating)
             question.insert()
             selection = Question.query.order_by(Question.id).all()
             current_questions = paginate_questions(
@@ -203,6 +219,9 @@ def create_app(test_config=None):
             Category.id == category_id).one_or_none()
         selection = Question.query.filter(
             Question.category == category_id).all()
+
+        if not len(selection):
+            abort(422)
         current_questions = paginate_questions(
             request=request, selection=selection)
 
@@ -230,6 +249,12 @@ def create_app(test_config=None):
         request_body = request.get_json()
         previous_questions = request_body.get("previous_questions", None)
         quiz_category = request_body.get("quiz_category", None)
+        category_questions_count = Question.query.filter(
+            Question.category == quiz_category["id"]).count()
+        print(category_questions_count)
+
+        if category_questions_count < 5:
+            abort(422)
 
         if previous_questions is None and quiz_category is None:
             abort(400)
@@ -254,13 +279,30 @@ def create_app(test_config=None):
             "question": question
         })
 
+    @app.route("/questions/<int:question_id>/rating")
+    def update_question_rating(question_id):
+        question = Question.query.filter(
+            Question.id == int(question_id)).one_or_none()
+        print(question_id, question)
+        selection = Question.query.order_by(Question.id).all()
+        current_questions = paginate_questions(
+            request=request, selection=selection)
+
+        question.rating = 5
+        question.update()
+        return jsonify({
+            "success": True,
+            "updated_question": question.id,
+            "questions": current_questions
+        })
+
     """
     @TODO:
     Create error handlers for all expected errors
     including 404 and 422.
     """
 
-    @app.errorhandler(404)
+    @ app.errorhandler(404)
     def not_found(error):
         return jsonify({
             "success": False,
@@ -268,7 +310,7 @@ def create_app(test_config=None):
             "message": "resource not found"
         }), 404
 
-    @app.errorhandler(400)
+    @ app.errorhandler(400)
     def bad_request(error):
         return jsonify({
             "success": False,
@@ -276,7 +318,7 @@ def create_app(test_config=None):
             "message": "bad request"
         }), 400
 
-    @app.errorhandler(405)
+    @ app.errorhandler(405)
     def method_not_allowed(error):
         return jsonify({
             "success": False,
@@ -284,7 +326,7 @@ def create_app(test_config=None):
             "message": "method not allowed"
         }), 405
 
-    @app.errorhandler(422)
+    @ app.errorhandler(422)
     def unprocessable(error):
         return jsonify({
             "success": False,
