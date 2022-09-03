@@ -1,3 +1,4 @@
+from crypt import methods
 import json
 from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
@@ -279,7 +280,7 @@ def create_app(test_config=None):
             "question": question
         })
 
-    @app.route("/questions/<int:question_id>/rating")
+    @app.route("/questions/<int:question_id>/rating", methods=["PATCH"])
     def update_question_rating(question_id):
         question = Question.query.filter(
             Question.id == int(question_id)).one_or_none()
