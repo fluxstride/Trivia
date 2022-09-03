@@ -124,6 +124,30 @@ The API will return a **JSON** response with the format below it the request fai
 
 #
 
+`POST "/categories"`
+
+- Creates a new category of question
+- Sample request: `curl -X POST -H 'Content-Type:application/json' http://localhost:5000/categories -d '{"category":"tester"}'`
+
+#### Request body sample
+
+```json
+{
+  "category": "tester"
+}
+```
+
+#### Response:
+
+```json
+{
+  "success": true,
+  "created_category": 13
+}
+```
+
+#
+
 `GET "/questions"`
 
 - Returns a paginated list of questions
@@ -423,3 +447,5 @@ The API will return a **JSON** response with the format below it the request fai
   }
 }
 ```
+
+``
