@@ -15,9 +15,47 @@ Trivia app is a quiz app for testing your knowlege in various fieds like.
 
 ## **Getting Started**
 
-Base URL:
+### **Install Dependencies and run**
+
+Run the commands below to install all the required dependencies to successfully run the app
+
+### **Backend**
+
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+#### **Start up the project**
+
+```bash
+export FLASK_APP=flaskr
+export FLASK_DEBUG=true
+flask run
+```
+
+**Base URL:**
 
 #### `http://localhost:5000`
+
+#
+
+### **Frontend**
+
+```bash
+cd frontend
+npm install
+```
+
+#### **Start up the project**
+
+```bash
+npm start
+```
+
+**Base URL:**
+
+#### `http://localhost:3000`
 
 #
 
