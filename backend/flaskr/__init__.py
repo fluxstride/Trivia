@@ -1,5 +1,3 @@
-from crypt import methods
-import json
 from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
 import random
@@ -250,8 +248,14 @@ def create_app(test_config=None):
         request_body = request.get_json()
         previous_questions = request_body.get("previous_questions", None)
         quiz_category = request_body.get("quiz_category", None)
-        category_questions_count = Question.query.filter(
-            Question.category == quiz_category["id"]).count()
+        print(quiz_category["id"] == 0)
+
+        if quiz_category["id"] == 0:
+            category_questions_count = Question.query.count()
+        else:
+            category_questions_count = Question.query.filter(
+                Question.category == quiz_category["id"]).count()
+
         print(category_questions_count)
 
         if category_questions_count < 5:
