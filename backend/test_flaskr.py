@@ -46,7 +46,6 @@ class TriviaTestCase(unittest.TestCase):
     def test_no_categories(self):
         res = self.client().get('/categories')
         data = json.loads(res.data)
-        print(res)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
@@ -126,7 +125,6 @@ class TriviaTestCase(unittest.TestCase):
             "quiz_category": {"id": 0}
         })
         data = json.loads(res.data)
-        print(data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
